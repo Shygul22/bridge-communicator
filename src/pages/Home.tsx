@@ -156,15 +156,18 @@ const Home = () => {
 
           {/* Quick Actions */}
           <div className="grid md:grid-cols-2 gap-4">
-            <Card className="p-6 space-y-3 hover:shadow-[var(--shadow-soft)] transition-shadow cursor-pointer">
+            <Card 
+              className="p-6 space-y-3 hover:shadow-[var(--shadow-soft)] transition-shadow cursor-pointer"
+              onClick={() => navigate("/conversations")}
+            >
               <div className="flex items-center gap-3">
                 <div className="rounded-full bg-primary/10 p-3">
-                  <Mic className="h-6 w-6 text-primary" />
+                  <MessageSquare className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">Voice Translation</h3>
+                  <h3 className="font-semibold">Chat</h3>
                   <p className="text-sm text-muted-foreground">
-                    Convert speech to sign language
+                    Start a conversation
                   </p>
                 </div>
               </div>
@@ -173,12 +176,12 @@ const Home = () => {
             <Card className="p-6 space-y-3 hover:shadow-[var(--shadow-soft)] transition-shadow cursor-pointer">
               <div className="flex items-center gap-3">
                 <div className="rounded-full bg-secondary/10 p-3">
-                  <MessageSquare className="h-6 w-6 text-secondary" />
+                  <Mic className="h-6 w-6 text-secondary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">Text Translation</h3>
+                  <h3 className="font-semibold">Voice Translation</h3>
                   <p className="text-sm text-muted-foreground">
-                    Type to communicate
+                    Convert speech to sign language
                   </p>
                 </div>
               </div>
