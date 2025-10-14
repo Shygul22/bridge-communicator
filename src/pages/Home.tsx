@@ -14,6 +14,7 @@ import {
   Mic,
   MessageSquare,
 } from "lucide-react";
+import { OnlineUsers } from "@/components/OnlineUsers";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -187,6 +188,9 @@ const Home = () => {
               </div>
             </Card>
           </div>
+
+          {/* Online Users */}
+          <OnlineUsers />
         </div>
       </main>
     </div>
