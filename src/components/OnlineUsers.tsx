@@ -95,7 +95,7 @@ export const OnlineUsers = () => {
         .maybeSingle();
 
       if (existingConversation) {
-        navigate(`/chat/${existingConversation.id}`);
+        navigate(`/conversations`);
         return;
       }
 
@@ -111,7 +111,7 @@ export const OnlineUsers = () => {
 
       if (error) throw error;
 
-      navigate(`/chat/${newConversation.id}`);
+      navigate(`/conversations`);
     } catch (error: any) {
       console.error("Error starting chat:", error);
       toast({
