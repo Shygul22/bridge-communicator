@@ -14,10 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          id: string
+          joined_at: string | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
+          group_avatar_url: string | null
+          group_name: string | null
           id: string
+          is_group: boolean | null
           last_message_at: string | null
           participant1_id: string
           participant2_id: string
@@ -25,7 +60,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          group_avatar_url?: string | null
+          group_name?: string | null
           id?: string
+          is_group?: boolean | null
           last_message_at?: string | null
           participant1_id: string
           participant2_id: string
@@ -33,7 +71,10 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          group_avatar_url?: string | null
+          group_name?: string | null
           id?: string
+          is_group?: boolean | null
           last_message_at?: string | null
           participant1_id?: string
           participant2_id?: string
@@ -46,9 +87,15 @@ export type Database = {
           content: string
           conversation_id: string
           created_at: string
+          deleted_at: string | null
+          edited_at: string | null
           id: string
+          is_deleted: boolean | null
+          is_pinned: boolean | null
           is_read: boolean
           message_type: string
+          parent_message_id: string | null
+          reactions: Json | null
           sender_id: string
           translation: string | null
         }
@@ -56,9 +103,15 @@ export type Database = {
           content: string
           conversation_id: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
           id?: string
+          is_deleted?: boolean | null
+          is_pinned?: boolean | null
           is_read?: boolean
           message_type?: string
+          parent_message_id?: string | null
+          reactions?: Json | null
           sender_id: string
           translation?: string | null
         }
@@ -66,9 +119,15 @@ export type Database = {
           content?: string
           conversation_id?: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
           id?: string
+          is_deleted?: boolean | null
+          is_pinned?: boolean | null
           is_read?: boolean
           message_type?: string
+          parent_message_id?: string | null
+          reactions?: Json | null
           sender_id?: string
           translation?: string | null
         }
@@ -78,6 +137,13 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_parent_message_id_fkey"
+            columns: ["parent_message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
             referencedColumns: ["id"]
           },
         ]
@@ -102,6 +168,35 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      typing_indicators: {
+        Row: {
+          conversation_id: string
+          id: string
+          started_at: string | null
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          id?: string
+          started_at?: string | null
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          id?: string
+          started_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "typing_indicators_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_preferences: {
         Row: {
