@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Send, Mic, Video, Hand, Check, CheckCheck, X, Pin } from "lucide-react";
+import { ArrowLeft, Send, Mic, Video, Hand, Check, CheckCheck, X, Pin, Users } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { EmojiPicker } from "@/components/EmojiPicker";
 import { MessageActions } from "@/components/MessageActions";
+import { OnlineUsers } from "@/components/OnlineUsers";
 
 interface Reaction {
   emoji: string;
@@ -399,9 +401,26 @@ const Chat = () => {
             </div>
             <h1 className="text-lg font-semibold">Conversation</h1>
           </div>
-          <Button variant="ghost" size="icon">
-            <Video className="h-5 w-5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon">
+              <Video className="h-5 w-5" />
+            </Button>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Users className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>All Users</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6">
+                  <OnlineUsers />
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </header>
 
