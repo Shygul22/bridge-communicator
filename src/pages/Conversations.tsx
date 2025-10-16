@@ -4,9 +4,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Hand, MessageSquare, ArrowLeft, Plus } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { OnlineUsers } from "@/components/OnlineUsers";
 
 interface Conversation {
   id: string;
@@ -22,6 +24,7 @@ const Conversations = () => {
   const { toast } = useToast();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showUserSelection, setShowUserSelection] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -87,10 +90,7 @@ const Conversations = () => {
   };
 
   const handleStartNewConversation = () => {
-    toast({
-      title: "Coming Soon",
-      description: "User selection for new conversations will be available soon!",
-    });
+    setShowUserSelection(true);
   };
 
   if (loading || isLoading) {
@@ -114,9 +114,19 @@ const Conversations = () => {
             </div>
             <h1 className="text-2xl font-bold">Conversations</h1>
           </div>
-          <Button onClick={handleStartNewConversation} size="icon">
-            <Plus className="h-5 w-5" />
-          </Button>
+          <Dialog open={showUserSelection} onOpenChange={setShowUserSelection}>
+            <DialogTrigger asChild>
+              <Button onClick={handleStartNewConversation} size="icon">
+                <Plus className="h-5 w-5" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Start New Conversation</DialogTitle>
+              </DialogHeader>
+              <OnlineUsers />
+            </DialogContent>
+          </Dialog>
         </div>
       </header>
 
@@ -128,10 +138,20 @@ const Conversations = () => {
             <p className="text-muted-foreground mb-6">
               Start a new conversation to connect with other users
             </p>
-            <Button onClick={handleStartNewConversation}>
-              <Plus className="mr-2 h-4 w-4" />
-              Start New Conversation
-            </Button>
+            <Dialog open={showUserSelection} onOpenChange={setShowUserSelection}>
+              <DialogTrigger asChild>
+                <Button onClick={handleStartNewConversation}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Start New Conversation
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Start New Conversation</DialogTitle>
+                </DialogHeader>
+                <OnlineUsers />
+              </DialogContent>
+            </Dialog>
           </Card>
         ) : (
           <div className="space-y-3">
