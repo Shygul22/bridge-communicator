@@ -13,6 +13,7 @@ import {
   LogOut,
   Mic,
   MessageSquare,
+  User,
 } from "lucide-react";
 import { OnlineUsers } from "@/components/OnlineUsers";
 
@@ -95,6 +96,9 @@ const Home = () => {
             <h1 className="text-2xl font-bold">SignBridge</h1>
           </div>
           <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/profile")}>
+              <User className="h-5 w-5" />
+            </Button>
             <Button variant="ghost" size="icon" onClick={() => navigate("/settings")}>
               <SettingsIcon className="h-5 w-5" />
             </Button>
