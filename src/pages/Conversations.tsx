@@ -16,6 +16,7 @@ interface Conversation {
   participant2_id: string;
   last_message_at: string;
   otherUserId: string;
+  otherUserEmail: string;
 }
 
 const Conversations = () => {
@@ -49,10 +50,26 @@ const Conversations = () => {
 
       if (error) throw error;
 
-      const conversationsWithOtherUser = data.map((conv) => ({
-        ...conv,
-        otherUserId: conv.participant1_id === user?.id ? conv.participant2_id : conv.participant1_id,
-      }));
+      // Fetch profiles for all other users
+      const otherUserIds = data.map((conv) => 
+        conv.participant1_id === user?.id ? conv.participant2_id : conv.participant1_id
+      );
+
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, email")
+        .in("id", otherUserIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.id, p.email]) || []);
+
+      const conversationsWithOtherUser = data.map((conv) => {
+        const otherUserId = conv.participant1_id === user?.id ? conv.participant2_id : conv.participant1_id;
+        return {
+          ...conv,
+          otherUserId,
+          otherUserEmail: profileMap.get(otherUserId) || "Unknown User",
+        };
+      });
 
       setConversations(conversationsWithOtherUser);
     } catch (error: any) {
@@ -166,7 +183,7 @@ const Conversations = () => {
                     <Hand className="h-6 w-6 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold">User {conv.otherUserId.slice(0, 8)}</h3>
+                    <h3 className="font-semibold">{conv.otherUserEmail}</h3>
                     <p className="text-sm text-muted-foreground">
                       Last message {formatDistanceToNow(new Date(conv.last_message_at))} ago
                     </p>
