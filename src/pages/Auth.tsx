@@ -17,6 +17,7 @@ const Auth = () => {
   const [mode, setMode] = useState<AuthMode>("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -55,25 +56,49 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!displayName.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter your display name",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
 
     try {
       const redirectUrl = `${window.location.origin}/`;
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: redirectUrl,
+          data: {
+            display_name: displayName.trim(),
+          },
         },
       });
 
       if (error) throw error;
+
+      // Update profile with display name after signup
+      if (data.user) {
+        await supabase
+          .from("profiles")
+          .update({ display_name: displayName.trim() })
+          .eq("id", data.user.id);
+      }
 
       toast({
         title: "Account created!",
         description: "You can now sign in.",
       });
       setMode("signin");
+      setEmail("");
+      setPassword("");
+      setDisplayName("");
     } catch (error: any) {
       toast({
         title: "Error creating account",
@@ -163,6 +188,21 @@ const Auth = () => {
             }
             className="space-y-4"
           >
+            {mode === "signup" && (
+              <div className="space-y-2">
+                <Label htmlFor="displayName">Display Name</Label>
+                <Input
+                  id="displayName"
+                  type="text"
+                  placeholder="Your name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  required
+                  maxLength={50}
+                />
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="email">
                 <Mail className="inline h-4 w-4 mr-2" />
@@ -191,6 +231,7 @@ const Auth = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  minLength={6}
                 />
               </div>
             )}

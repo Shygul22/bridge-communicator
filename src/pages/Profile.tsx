@@ -36,13 +36,16 @@ const Profile = () => {
         .from("profiles")
         .select("*")
         .eq("id", user?.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
       if (data) {
         setDisplayName(data.display_name || "");
         setEmail(data.email || user?.email || "");
+      } else {
+        // Profile doesn't exist, set email from auth
+        setEmail(user?.email || "");
       }
     } catch (error: any) {
       console.error("Error fetching profile:", error);
