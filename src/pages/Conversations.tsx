@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Hand, MessageSquare, ArrowLeft, Plus } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -16,6 +16,7 @@ interface Conversation {
   participant2_id: string;
   last_message_at: string;
   otherUserId: string;
+  otherUserDisplayName: string;
   otherUserEmail: string;
 }
 
@@ -57,17 +58,19 @@ const Conversations = () => {
 
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("id, email")
+        .select("id, email, display_name")
         .in("id", otherUserIds);
 
-      const profileMap = new Map(profiles?.map(p => [p.id, p.email]) || []);
+      const profileMap = new Map(profiles?.map(p => [p.id, { email: p.email, display_name: p.display_name }]) || []);
 
       const conversationsWithOtherUser = data.map((conv) => {
         const otherUserId = conv.participant1_id === user?.id ? conv.participant2_id : conv.participant1_id;
+        const profile = profileMap.get(otherUserId);
         return {
           ...conv,
           otherUserId,
-          otherUserEmail: profileMap.get(otherUserId) || "Unknown User",
+          otherUserDisplayName: profile?.display_name || profile?.email || "Unknown User",
+          otherUserEmail: profile?.email || "Unknown User",
         };
       });
 
@@ -140,6 +143,9 @@ const Conversations = () => {
             <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Start New Conversation</DialogTitle>
+                <DialogDescription>
+                  Select a user to start chatting with
+                </DialogDescription>
               </DialogHeader>
               <OnlineUsers />
             </DialogContent>
@@ -165,6 +171,9 @@ const Conversations = () => {
               <DialogContent className="max-w-md">
                 <DialogHeader>
                   <DialogTitle>Start New Conversation</DialogTitle>
+                  <DialogDescription>
+                    Select a user to start chatting with
+                  </DialogDescription>
                 </DialogHeader>
                 <OnlineUsers />
               </DialogContent>
@@ -183,7 +192,7 @@ const Conversations = () => {
                     <Hand className="h-6 w-6 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold">{conv.otherUserEmail}</h3>
+                    <h3 className="font-semibold">{conv.otherUserDisplayName}</h3>
                     <p className="text-sm text-muted-foreground">
                       Last message {formatDistanceToNow(new Date(conv.last_message_at))} ago
                     </p>
